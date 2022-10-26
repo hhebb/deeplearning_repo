@@ -38,7 +38,7 @@ class MultiClassificationMetric:
         pass
 
     def get_top_k(self, pred, label, k):
-        
+        s
         rate_1 = 0
         rate_k = 0
 
