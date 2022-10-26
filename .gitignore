@@ -2,6 +2,9 @@
 *.png
 *.jpg
 *.csv
+*.jpeg
+*.JPEG
+*.txt
 
 # cache
 *.pyc
