@@ -11,14 +11,17 @@ class Xception(torch.nn.Module):
         # entry flow
         self.conv_1 = ConvBlock(in_channels=3, out_channels=32, kernel=3, stride=2)
         self.conv_2 = ConvBlock(in_channels=32, out_channels=64, kernel=3, stride=1)
+        self.res_1 = ConvBlock(in_channels=64, out_channels=128, kernel=1, stride=2, padding=1)
 
         self.sep_conv_1 = SeparableConv(in_channels=64, out_channels=128)
         self.sep_conv_2 = SeparableConv(in_channels=128, out_channels=128)
         self.pool_1 = torch.nn.MaxPool2d(kernel_size=3, stride=2)
+        self.res_2 = ConvBlock(in_channels=128, out_channels=256, kernel=1, stride=2, padding=1)
 
         self.sep_conv_3 = SeparableConv(in_channels=128, out_channels=256)
         self.sep_conv_4 = SeparableConv(in_channels=256, out_channels=256)
         self.pool_2 = torch.nn.MaxPool2d(kernel_size=3, stride=2)
+        self.res_3 = ConvBlock(in_channels=256, out_channels=728, kernel=1, stride=2, padding=1)
 
         self.sep_conv_5 = SeparableConv(in_channels=256, out_channels=728)
         self.sep_conv_6 = SeparableConv(in_channels=728, out_channels=728)
@@ -39,6 +42,8 @@ class Xception(torch.nn.Module):
         self.sep_conv_7 = SeparableConv(in_channels=728, out_channels=728)
         self.sep_conv_8 = SeparableConv(in_channels=728, out_channels=1024)
         self.pool_4 = torch.nn.MaxPool2d(kernel_size=3, stride=2)
+        self.res_4 = ConvBlock(in_channels=728, out_channels=1024, kernel=1, stride=2, padding=1)
+
 
         self.sep_conv_9 = SeparableConv(in_channels=1024, out_channels=1536)
         self.sep_conv_10 = SeparableConv(in_channels=1536, out_channels=2048)
@@ -49,20 +54,26 @@ class Xception(torch.nn.Module):
 
     def forward(self, x):
         # entry
-        x = self.conv_1(x)
-        entry = self.conv_2(x)
+        entry = self.conv_1(x)
+        entry = self.conv_2(entry)
+        res_1 = self.res_1(entry)
 
         out_1 = self.sep_conv_1(entry)
         out_1 = self.sep_conv_2(out_1)
         out_1 = self.pool_1(out_1)
+        out_1 += res_1
 
         out_2 = self.sep_conv_3(out_1)
         out_2 = self.sep_conv_4(out_2)
         out_2 = self.pool_2(out_2)
+        res_2 = self.res_2(out_1)
+        out_2 += res_2
 
         out_3 = self.sep_conv_5(out_2)
         out_3 = self.sep_conv_6(out_3)
         out_3 = self.pool_3(out_3)
+        res_3 = self.res_3(out_2)
+        out_3 += res_3
         # print(out_3.shape)
         
         # middle
@@ -74,6 +85,8 @@ class Xception(torch.nn.Module):
         exit = self.sep_conv_7(middle)
         exit = self.sep_conv_8(exit)
         exit = self.pool_4(exit)
+        res_4 = self.res_4(middle)
+        exit += res_4
 
         exit = self.sep_conv_9(exit)
         exit = self.sep_conv_10(exit)
@@ -88,7 +101,7 @@ class SeparableConv(torch.nn.Sequential):
     def __init__(self, in_channels, out_channels):
         super().__init__()
         # 1x1 conv
-        self.add_module('pointwise', ConvBlock(in_channels=in_channels, out_channels=out_channels, kernel=1, stride=1, padding=0, group=1))
+        self.add_module('pointwise', ConvBlock(in_channels=in_channels, out_channels=out_channels, kernel=1, stride=1, padding=1, group=1))
         # depthwise
         self.add_module('depthwise', ConvBlock(in_channels=out_channels, out_channels=out_channels, kernel=3, stride=1, padding=1, group=out_channels))
 
