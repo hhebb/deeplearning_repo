@@ -6,6 +6,8 @@
 *.JPEG
 *.txt
 *.json
+*.xml
+*.tar
 
 # cache
 *.pyc
