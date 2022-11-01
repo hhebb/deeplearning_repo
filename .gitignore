@@ -5,6 +5,7 @@
 *.jpeg
 *.JPEG
 *.txt
+*.json
 
 # cache
 *.pyc
