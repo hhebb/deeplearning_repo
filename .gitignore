@@ -8,6 +8,8 @@
 *.json
 *.xml
 *.tar
+*.gz
+*-ubyte
 
 # cache
 *.pyc
