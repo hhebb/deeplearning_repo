@@ -10,7 +10,19 @@
 *.tar
 *.gz
 *-ubyte
+*.zip
+*.mat
+*.avi
+*.wandb
+*.yaml
+*.mp4
+*.pt
+*.pth
+*.m
+*.DS_Store
+*.Identifier
 
 # cache
 *.pyc
 *.log
+events*

@@ -1,0 +1,7 @@
+todo
+
+* 증강 빡쎼게 (resize, hsv)
+* 데이터 추가
+* pre trained
+* test 시에 원본에다가 마스크 입히기
+* negative samples trick
